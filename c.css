@@ -1,0 +1,96 @@
+.myButton {
+	background-color:#454545;
+	-moz-border-radius:18px;
+	-webkit-border-radius:18px;
+	border-radius:18px;
+	border: 2px solid black;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	padding:16px 16px;
+}
+.myButton:hover { 
+	background-color:#5DA8FC;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+.myButton_bev {
+	background-color:#454545;
+	-moz-border-radius:18px;
+	-webkit-border-radius:18px;
+	border-radius:18px;
+	border: 2px solid black;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	padding:10px 10px;
+	margin-top: 3px;
+}
+.myButton_bev:hover { 
+	background-color:#98FB98;
+}
+.myButton_bev:active {
+	position:relative;
+	top:1px;
+}
+
+#container
+{
+	background-image: url("multi_F6KNB.jpg");
+    background-repeat: no-repeat;
+    width: 918px;
+    height:193px;
+	border: 1px solid red;
+}
+
+.right {
+    position: relative;
+    right: 0px;
+}
+
+.bon {
+	background-color: #1B8500;
+	color: white;
+}
+
+.boff {
+	background-color: #454545;
+	color: #FFD000;
+}
+
+.myTab {
+	float: left;
+}
+
+.myTab2 {
+	float: left;
+	width:250px;
+	margin-top: 80px;
+	margin-left: 50px;
+}
+
+#myTabi {
+	font-family: Courier;
+	font-weight: bold;
+	color: #2fd6ec;	
+}
+
+.mytable
+{
+	margin-top: 76px;
+	margin-left: 67px;
+	width: 346px;
+}
+.mytable_bev
+{
+	float: center;
+	margin-top: 48px;
+	margin-left: 20px;
+	width: 160px;
+}
+body
+{
+	background-color: black;
+}
