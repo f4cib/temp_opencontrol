@@ -27,9 +27,9 @@ void setRegisterArray(byte button, boolean regArr[])
 {
   if (!inTxEditMode)                    // in rx mode
   {
-    if (button < 5)                     // only button could be active, except button 4 // F4CIB 4 replaced by 6
+    if (button < 8)                     // only one button could be active, except button 4 // F4CIB from 4 to 8 i want only one button at one time
     {
-      toggleRegisterArray(regArr, 0); // F4CIB one button added ie. 5 buttons, and i want only one active at once so always in this case
+      toggleRegisterArray(regArr, 0); // F4CIB one button added ie. 8 buttons, and i want only one active at once so always in this case
 
       if (regArr[button - 1] == 1)
         regArr[button - 1] = 0;
@@ -44,30 +44,34 @@ void setRegisterArray(byte button, boolean regArr[])
   }
   else // in tx mode
   {
-    byte checkOne = verifyButtons(regArr, 5);   // F4CIB 4 replaced by 5, we now have 5 buttons...
+    byte checkOne = verifyButtons(regArr,8);   // F4CIB 4 replaced by 5, we now have 5 buttons... but to 8
   if (checkOne == 1) // only one is on
   {
     if (regArr[button - 1] == 0) // was the button off before? For sure, because its only one on...
     {
-      if (button < 5) // if its 2, turn it on.. // F4CIB again 4 replaced by 5 because now 5 buttons but button 1 is for beverage so never Tx on it... 
+      if (button < 8) // if its 2, turn it on.. // F4CIB again 4 replaced by 5 because now 5 buttons but button 1 is for beverage so never Tx on it... 
         regArr[button-1] = 1;                   // F4CIB and buttons 3, 4, 5 are band dependant, let's hope the remote operator is not an idiot !
       else
       {
-        regArr[0] = 1;
-        regArr[1] = 1;
-        regArr[2] = 1;
-        regArr[3] = 1;
+        regArr[0] = 0; //regArr is for relay in my use & button = one relay
+        regArr[1] = 0;
+        regArr[2] = 0;
+        regArr[3] = 0;
+        regArr[4] = 0;    //F4CIB register enlarges to 16 to be able to switch 8 relays by using 2 74HC595N
+        regArr[5] = 0;
+        regArr[6] = 0;
+        regArr[7] = 0;
       }
  //     regArr[3] = 1; // if more than one is on, switch on 4, because of phasing...// F4CIB no phasing anymore last relay is an antenna so one condition up
     }
   }
   
-  if (checkOne == 2) 
+  if (checkOne == 2)    // F4CIB we should not come here so i will not change anything  
   {
     if (regArr[button - 1] == 0) // was the button off before? For sure, because its only one on...
     {
-      if (button < 5) // if its 2, turn it on.. // F4CIB again 4 replaced by 5 because now 5 buttons but button 1 is for beverage so never Tx on it... 
-        regArr[button-1] = 1;                   // F4CIB and buttons 3, 4, 5 are band dependant, let's hope the remote operator is not an idiot !
+      if (button < 4) // if its 2, turn it on..  
+        regArr[button-1] = 1;                   
       else
       {
         regArr[0] = 1;
@@ -78,7 +82,7 @@ void setRegisterArray(byte button, boolean regArr[])
     }
   }
  
-  if (checkOne == 3) // if 3 are on (hint: 2 can never be on, because phasing is missing.. //F4CIB hint is not valid anymore... add case checkOne == 2
+  if (checkOne == 3) // if 3 are on (hint: 2 can never be on, because phasing is missing.. //F4CIB hint is not valid anymore... add case checkOne == 2 // F4CIB we should not come here so i will not change anything
   {
     if (regArr[button - 1] == 0) // turn last missing one on...
       regArr[button - 1] = 1;
@@ -95,7 +99,7 @@ void setRegisterArray(byte button, boolean regArr[])
       regArr[3] = 0; // phasing has to be off
     }
   }
-  if (checkOne == 4) // if all are on...
+  if (checkOne == 4) // if all are on...  //F4CIB we should never come here
   {
     if (button < 4) // if button < 4 is pressed, just turn it off
       regArr[button-1] = 0;
@@ -115,19 +119,19 @@ void setRegisterLed(boolean isTx)
 {
   if (isTx)
   {
-    byte checkOne = verifyButtons(registersTx, 4);
+    byte checkOne = verifyButtons(registersTx, 8);  //from 4 to 5 but will be 8
     Serial.println(checkOne);
-    for (int i = 0; i<4; i++)
+    for (int i = 0; i<8; i++)     //from 4 to 8 remember arrays have been enlarged to 8
     {
       registersTxLed[i] = registersTx[i];
     }
 
-    if (checkOne == 3)
+    if (checkOne == 3) //we should never go here
       registersTxLed[3] = 0;
   }
   else
   {
-    for (int i = 0; i<4; i++)
+    for (int i = 0; i<8; i++)   //from 4 to 8 remember arrays have been enlarged to 8
     {
       registersRxLed[i] = registersRx[i];
     }
@@ -142,7 +146,7 @@ void setDisplay(boolean regArry[], byte row)
 
   if (row == 0)
   {
-    for (byte i = 3; i >= 0; i--)
+    for (byte i = 7; i >= 0; i--)       //F4CIB from 3 to 7
     {
       if (regArry[i] == 1)
       {
@@ -154,13 +158,13 @@ void setDisplay(boolean regArry[], byte row)
   else
   {
     int sum = 0;
-    sum = verifyButtons(regArry, 4);
-    Serial.print("su");
-    Serial.print(sum);
+    sum = verifyButtons(regArry, 8);    //from 4 to 5 buttons can be up to 8
+    Serial.print("su - nb of buttons selected ");   //F4CIB added " - nb of buttons selected " for better readability but I guess this Serial.print need to be commented to fasten program execution
+    Serial.println(sum);
 
-    if (sum == 1 || sum > 2)
+    if (sum == 1 || sum > 2) // do not understand this double condition if less than 2 it must be 1, no ?
     {
-      for (byte i = 3; i >= 0; i--)
+      for (byte i = 7; i >= 0; i--)   // from 3 to 7 but in Tx never go to 1 which are bev from 0 to 1 (maybenot switched back to 0
       {
         if (regArry[i] == 1)
         {
@@ -169,7 +173,7 @@ void setDisplay(boolean regArry[], byte row)
         }
       }
     }
-    else
+    else  //F4CIB only one button we should not go here
     {
       if (regArry[0] == 1 && regArry[1] == 1)
       {
