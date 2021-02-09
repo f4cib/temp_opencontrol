@@ -110,7 +110,7 @@ const char  message12[] PROGMEM = { "<tr><td><a id=\"b0\" href=\"#\" class=\"myB
 const char  message13[] PROGMEM = { "<td><a id=\"b1\" href=\"#\" class=\"myButton\" onClick=\"clkButton(1)\"> </a></td>" };
 const char  message14[] PROGMEM = { "<td><a id=\"b2\" href=\"#\" class=\"myButton\" onClick=\"clkButton(2)\"> </a></td>" };
 const char  message15[] PROGMEM = { "<td><a id=\"b3\" href=\"#\" class=\"myButton\" onClick=\"clkButton(3)\"> </a></td>" };
-const char  message151[] PROGMEM = { "<td><a id=\"b4\" href=\"#\" class=\"myButton\" onClick=\"clkButton(4)\"> </a></td>" };
+const char  message151[] PROGMEM = { "<td><a id=\"b8\" href=\"#\" class=\"myButton\" onClick=\"clkButton(8)\"> </a></td>" };    //Tx button 
 const char  message16[] PROGMEM = { "<td align=\"center\"><a id=\"b5\" href=\"#\" class=\"myButton right\" onClick=\"clkButton(5)\"> </a></td>" };
 const char  message17[] PROGMEM = { "</tr>" };
 const char  message18[] PROGMEM = { "</table>" };
