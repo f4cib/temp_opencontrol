@@ -1,6 +1,6 @@
 function setRegisterArray(button, regArr)
 {
-    var checkHowManyOn = verifyButtons(regArr, 4);
+    var checkHowManyOn = verifyButtons(regArr, 8);
     console.log(checkHowManyOn);
 
     var isSameKeyPressed = false;
@@ -8,7 +8,7 @@ function setRegisterArray(button, regArr)
     if (regArr[button - 1] == 1)
         isSameKeyPressed = true;
 
-    if (checkHowManyOn == 1 && button < 6)
+    if (checkHowManyOn == 1 && button < 8) //je ne veux qu'un bouton a la fois
     {
         if (isSameKeyPressed == false)
         {
@@ -17,6 +17,9 @@ function setRegisterArray(button, regArr)
             regArr[2] = 0;
             regArr[3] = 0;
             regArr[4] = 0;
+            regArr[5] = 0;
+            regArr[6] = 0;
+            regArr[7] = 0;
             regArr[button - 1] = 1;
             return regArr;
         }
@@ -29,6 +32,9 @@ function setRegisterArray(button, regArr)
                 regArr[2] = 0;
 				regArr[3] = 0;
 				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 2)
@@ -38,6 +44,9 @@ function setRegisterArray(button, regArr)
                 regArr[2] = 0;
 				regArr[3] = 0;
 				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 3)
@@ -47,6 +56,9 @@ function setRegisterArray(button, regArr)
                 regArr[2] = 1;
 				regArr[3] = 0;
 				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 4)
@@ -56,15 +68,57 @@ function setRegisterArray(button, regArr)
                 regArr[2] = 0;
 				regArr[3] = 1;
 				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 5)
             {
-                regArr[0] = 0;
-                regArr[1] = 0;
-                regArr[2] = 0;
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
 				regArr[3] = 0;
 				regArr[4] = 1;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
+                return regArr;
+            }
+            if (button == 6)
+            {
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 1;
+				regArr[6] = 0;
+				regArr[7] = 0;
+                return regArr;
+            }
+            if (button == 7)
+            {
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 1;
+				regArr[7] = 0;
+                return regArr;
+            }
+            if (button == 8)
+            {
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 1;
                 return regArr;
             }
         }
