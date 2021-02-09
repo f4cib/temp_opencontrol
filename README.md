@@ -71,9 +71,12 @@ void setupPinMode()
 	pinModeFast(txModePin, INPUT);
 	pinModeFast(txModeLedPin, OUTPUT);
 }
-Tous les boutons sont relies sur A0 (variable buttonPin) au travers d’un pont resistif et suivant la tension mesurée sur A0 on sait quel bouton a été enclenché
+
+Tous les boutons antennes Tx sont relies sur A0 (8K2 ; 2K2 ; 3K3 ; 6K8 ; 18K(variable buttonPin) au travers d’un pont resistif et suivant la tension mesurée sur A0 on sait quel bouton a été enclenché. alimenté en 12V les valeurs lues sont 0 ; 200 ; 385 ; 590 ; 785
 c’est le rôle de la fonction getPressedButton()
 
+Tous les boutons bev vont vers A1 (8K2, 2K2, 3K3,, 6K8, 12K, 22K) alimenté en 12V les valeurs lues sont 0 ; 210 ; 395 ; 595 ; 750 ; 860
+Attention a l’alimentation 4.77V alimenté en USB vs. 4.94V alimenté sous 9V (méthode à favoriser)
 
 Le PCF8574 gère le LCD // 16x2
 Le 74HC595 gère 4 relais (S3, S4, S5 et S6) bev antenne matrice ou une des 3 antennes auxiliaires.
@@ -83,6 +86,11 @@ La carte W5500 gère l’Ethernet
 PTT arrive d’un relais et envoie du 0/5V il est séquencé par l’Arduino et ressort en 0/5V.
 
 Relais beverages  
+
+How 74HC595 works:
+https://lastminuteengineers.com/74hc595-shift-register-arduino-tutorial/
+Use of 2 74HC595 to extend to 16 outputs from 3 wires:
+https://www.instructables.com/Arduino-16-LEDs-using-two-74HC595-shift-registers-/
 
 
 
