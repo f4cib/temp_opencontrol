@@ -46,12 +46,12 @@ byte ip[] = { 192, 168, 1, 179 };           //**********************************
 byte gateway[] = { 192, 168, 1, 1 };
 byte subnet[] = { 255, 255, 255, 0 };
 EthernetServer server(80);                  //*************************************************** <------------------------CHANGE PORT, IF YOU DONT LIKE PORT 80           
-
-boolean registersRx[4] = { 1, 0, 0, 0 };
-boolean registersTx[4] = { 1, 0, 0, 0 };
-boolean registersRxLed[4] = { 1, 0, 0, 0 };
-boolean registersTxLed[4] = { 1, 0, 0, 0 };
-boolean registersDisplay[4] = { 1, 0, 0, 0 };
+//F4CIB extended size of these 5 following registers from 4 to 8
+boolean registersRx[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
+boolean registersTx[8] = { 1, 1, 0, 0, 0, 0, 0, 0 };
+boolean registersRxLed[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
+boolean registersTxLed[8] = { 1, 1, 0, 0, 0, 0, 0, 0 };
+boolean registersDisplay[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 
 
 ///////////////////////////////////////// CHange the labels you want to have... there are about 11 chars left. so dont use longer labels than 11 chars...
@@ -72,8 +72,8 @@ boolean registersDisplay[4] = { 1, 0, 0, 0 };
 #endif
 
 #if SKETCHMODE == 3
-  String rxDisplayArray[10] = { "Beverage NE", "Beverage E", "Beverage SE",  "Beverage SW", "Beverage W", "Beverage NW", "Matrice", "Auxilaire #1", "Auxilaire #2", "Auxilaire #3" };
-  String txDisplayArray[4] = { "Matrice", "40M 2 ele", "20M Africa",  "80M dipole" };
+  String rxDisplayArray[5] = { "Beverage   ", "Matrice    ", "Auxiliaire1", "Auxiliaire2", "Auxiliaire3" };
+  String txDisplayArray[4] = { "Matrice    ", "40M 2 ele  ", "20M Africa ",  "80M dipole" };
 #endif
 
 /////////////////////////////////////// WWW Content for PROGMEM ////////////////////////////////////////////////////////////////////////////////////////////
@@ -296,7 +296,7 @@ void loop()
 		if (inTxEditMode)
 		{
 			inTxEditMode = false;
-			switchArrow(false);
+			switchArrow(false);                               // true for Tx (row 1);  false for Rx (row 0)
 			digitalWrite(txModeLedPin, HIGH);
 			writeDisplayRegister(registersRxLed);
 			writeRelayRegister(registersRx);
@@ -304,7 +304,7 @@ void loop()
 		else                                               // else go to the tx-edit
 		{
 			inTxEditMode = true;
-			switchArrow(true);
+			switchArrow(true);                               // true for Tx (row 1);  false for Rx (row 0)
 			digitalWrite(txModeLedPin, LOW);
 			writeDisplayRegister(registersTxLed);
 			writeRelayRegister(registersTx);
@@ -371,7 +371,7 @@ void resetDisplay()
 }
 
 // switch the -> to the needed position
-void switchArrow(boolean mode)
+void switchArrow(boolean mode)                               // true for Tx (row 1);  false for Rx (row 0)
 {
 
 	byte a = 0;
@@ -417,21 +417,26 @@ void setLabels(boolean regArry[], boolean mode)
 // my little Register method. Chains the displayregister with the rx/tx register and writes them into the chip.
 void writeRelayRegister(boolean registers[])
 {
-	boolean tempRegisters[8];
+	boolean tempRegisters[16];    // F4CIB extended from 8 to 16 to handle 8 relays will use 2 74HC595 to handle this size
 	byte inverter = 0;
 	byte displayinverter = 0;
 
-	for (int x = 0; x < 4; x++)
-	{
-		tempRegisters[x] = registers[x];
-		tempRegisters[x + 4] = registersDisplay[x];
-	}
+//  for (int x = 0; x < 4; x++)
+//  {
+//    tempRegisters[x] = registers[x];
+//    tempRegisters[x + 4] = registersDisplay[x];
+//  }
+  for (int x = 0; x < 8; x++)     //F4CIB 8 values for Tx & 8 for Rx
+  {
+    tempRegisters[x] = registers[x];
+//    tempRegisters[x + 8] = registersDisplay[x];
+  }
 
 	digitalWrite(STCP_pin, LOW);
 
-	for (int i = 7; i >= 0; i--)
+	for (int i = 15; i >= 0; i--) // F4CIB from 7 to 16
 	{
-		if (i < 4 && isInRelayInvertMode)
+		if (i < 8 && isInRelayInvertMode) // from 4 to 8 not sure what it does here...
 		{
 			if (tempRegisters[i] == 0)
 				inverter = 1;
@@ -452,14 +457,14 @@ void writeRelayRegister(boolean registers[])
 // write the values of a given register into the display register, only needed for showing the button status
 void writeDisplayRegister(boolean regA[])
 {
-	for (int a = 0; a < 4; a++)
+	for (int a = 0; a < 8; a++)   //from 4 to 8
 		registersDisplay[a] = regA[a];
 }
 
 // set the complete Register array to given value
 void toggleRegisterArray(boolean regA[], byte v1)
 {
-	for (int a = 0; a < 4; a++)
+	for (int a = 0; a < 8; a++)   //from 4 to 8
 		regA[a] = v1;
 }
 
@@ -609,17 +614,25 @@ void setRxSetup()
 
 /*------------------------------------------------- Button handling ---------------------------------------------------------------*/
 // return the pressed button depending on the resistor array
-byte getPressedButton()
+byte getPressedButton() // F4CIB updated these value for my own voltage divider (and enable a larger window capture)
 {
 	int c = getMyAverageValue();
 	if (c < 10 && c >= 0)
 		return 1;
-	else if (c > 85 && c < 95)
+	else if (c > 190 && c < 220)
 		return 2;
-	else if (c > 160 && c < 175)
+	else if (c > 375 && c < 405)
 		return 3;
-	else if (c > 200 && c < 240)
-		return 4;
+  else if (c > 580 && c < 610)
+    return 4;
+  else if (c > 775 && c < 795)  // F4CIB added some butons as well
+    return 5;
+//  else if (c > 775 && c < 795)  // F4CIB added some butons as well //F4CIB system will be capable of handling 8 relay let's prepare the code
+//    return 6;
+//  else if (c > 775 && c < 795)  // F4CIB added some butons as well
+//    return 7;
+//  else if (c > 775 && c < 795)  // F4CIB added some butons as well
+//    return 8;
 	else
 		return 0;
 }
@@ -632,9 +645,11 @@ int getMyAverageValue()
 	for (int i = 0; i < 4; i++)
 	{
 		int currentV = analogRead(buttonPin);
+//    int currentV = analogRead(A1);  //F4CIB i used this line to read value for by beverage selector that will be on A1
 		sum += currentV;
 		delay(5);
 	}
+//  Serial.print("button averaged value ");Serial.println( sum / 4);
 	return sum / 4;
 }
 
@@ -752,7 +767,7 @@ void printProgStr(const char * str, EthernetClient client)
 // Writes to both of the registers directly - Remember: If you are calling the webserver you have to take care about urself about button-switching logic and restrictions
 void writeToTheRegister(boolean regiA[], String theString)
 {
-	for (int d = 0; d < 4; d++)
+	for (int d = 0; d < 8; d++)   //F4CIB from 4 to 8
 	{
 		boolean val = true;
 		if (theString[d] == '0')
@@ -767,7 +782,7 @@ void writeToTheRegister(boolean regiA[], String theString)
 String convertArrayToString(boolean ri[])
 {
 	String mytemp;
-	for (int f = 0; f < 4; f++)
+	for (int f = 0; f < 8; f++)   //from 4 to 8
 	{
 		if (ri[f] == true)
 			mytemp += "1";
