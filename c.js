@@ -1,4 +1,4 @@
-// one button added for beverages Tx Set is now button 5
+// one button added for beverages Tx Set is now button 9
 // function setButton_bev added to deal with css when hovering beverages direction buttons
 var isTxEditMode = false;
 var txArray = [];
@@ -20,7 +20,7 @@ var myResponseHandler = function(data) {
 
 function fillArrays(stringRx, stringTx)
 {
-	for(var i=0; i<5; i++)
+	for(var i=0; i<9; i++)
 	{
 		rxArray[i] = stringRx[i].charCodeAt()-48;
 		txArray[i] = stringTx[i].charCodeAt()-48;
@@ -30,7 +30,7 @@ function fillArrays(stringRx, stringTx)
 
 function setButtons(arr)
 {
-	for(var i=0; i<5; i++)
+	for(var i=0; i<9; i++)
 	{		
 		setButton(i, arr[i]);
 	}	
@@ -107,7 +107,7 @@ function setContent(currentBank, toBankValue) {
 
 function clkButton(butNr)
 {
-	if(butNr == 5)
+	if(butNr == 9)
 	{
 		if(isTxEditMode== false)
 		{
@@ -162,7 +162,7 @@ function updateLCD()
 // set the complete Register array to given value
 function toggleRegisterArray(regA, v1)
 {
-  for (var a = 0; a < 5; a++)
+  for (var a = 0; a < 9; a++)
     regA[a] = v1;
 }
 
