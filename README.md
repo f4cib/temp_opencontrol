@@ -92,8 +92,12 @@ https://lastminuteengineers.com/74hc595-shift-register-arduino-tutorial/
 Use of 2 74HC595 to extend to 16 outputs from 3 wires:
 https://www.instructables.com/Arduino-16-LEDs-using-two-74HC595-shift-registers-/
 
+10/02/2021
 Le dialogue button vers WEB fonctionne
 Dans le sens WEB vers ARDUINO seule SetTx envoie un message, les boutons 1 à 5 rien voir les serial.print ajoutés pour le debug.
 AC mais sans les serial.print le sens arduino/button vers html ne marchait pas, il manquerait du délai ?
 
+Toujours un souci avec le bouton 2 qui semble envoyer une valeur fixe (196 conforme à la tension du diviseur) mais qui affiche et sur le lcd et sur le web une valeur qui change (mat aux1,2,3)
+Les autres boutons fonctionnent comme attendu et programment la matrice avec la sortie correspondante (debug actuel sera à accorder avec notre config se switch S3-S8)
 
+l'affichage sur le deuxieme 74HC595 ne semble pas marcher
