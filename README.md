@@ -92,5 +92,8 @@ https://lastminuteengineers.com/74hc595-shift-register-arduino-tutorial/
 Use of 2 74HC595 to extend to 16 outputs from 3 wires:
 https://www.instructables.com/Arduino-16-LEDs-using-two-74HC595-shift-registers-/
 
+Le dialogue button vers WEB fonctionne
+Dans le sens WEB vers ARDUINO seule SetTx envoie un message, les boutons 1 à 5 rien voir les serial.print ajoutés pour le debug.
+AC mais sans les serial.print le sens arduino/button vers html ne marchait pas, il manquerait du délai ?
 
 
