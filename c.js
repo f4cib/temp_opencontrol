@@ -20,7 +20,7 @@ var myResponseHandler = function(data) {
 
 function fillArrays(stringRx, stringTx)
 {
-	for(var i=0; i<9; i++)
+	for(var i=0; i<8; i++)
 	{
 		rxArray[i] = stringRx[i].charCodeAt()-48;
 		txArray[i] = stringTx[i].charCodeAt()-48;
@@ -28,15 +28,15 @@ function fillArrays(stringRx, stringTx)
 }
 
 
-function setButtons(arr)
+function setButtons(arr)	//cette fonction maj le statut des boutons du web
 {
-	for(var i=0; i<9; i++)
+	for(var i=0; i<6; i++) //tant que 5 boutons on va pas plus loin que 6
 	{		
 		setButton(i, arr[i]);
 	}	
 }
 
-function setButton(btnNr, expo)
+	function setButton(btnNr, expo)
 {
 	var buttonname = 'b'+btnNr;
 
@@ -48,11 +48,10 @@ function setButton(btnNr, expo)
 			
 	if(expo == 0)
 	{
-		var offbut = document.getElementById(buttonname);
+	var offbut = document.getElementById(buttonname);
 		offbut.className = "myButton right boff";
 	};
 }
-
 function setButton_bev(btnNr, expo)
 {
 	var buttonname = 'bev'+btnNr;

@@ -12,117 +12,117 @@ function setRegisterArray(button, regArr)
     {
         if (isSameKeyPressed == false)
         {
-            regArr[0] = 0;
-            regArr[1] = 0;
-            regArr[2] = 0;
-            regArr[3] = 0;
-            regArr[4] = 0;
-            regArr[5] = 0;
-            regArr[6] = 0;
-            regArr[7] = 0;
-            regArr[button - 1] = 1;
+			regArr[0] = 0;
+			regArr[1] = 0;
+			regArr[2] = 0;
+			regArr[3] = 0;
+			regArr[4] = 0;
+			regArr[5] = 0;
+			regArr[6] = 0;
+			regArr[7] = 0;
+			regArr[button - 1] = 1;
             return regArr;
         }
-        else
+/*       else
         {
-            if (button == 1)
+           if (button == 1)
             {
-                regArr[0] = 1;
-                regArr[1] = 0;
-                regArr[2] = 0;
-		regArr[3] = 0;
-		regArr[4] = 0;
-		regArr[5] = 0;
-		regArr[6] = 0;
-		regArr[7] = 0;
+				regArr[0] = 1;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 2)
             {
-                regArr[0] = 0;
-                regArr[1] = 1;
-                regArr[2] = 0;
-		regArr[3] = 0;
-		regArr[4] = 0;
-		regArr[5] = 0;
-		regArr[6] = 0;
-		regArr[7] = 0;
+				regArr[0] = 0;
+				regArr[1] = 1;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 3)
             {
-                regArr[0] = 0;
-                regArr[1] = 0;
-                regArr[2] = 1;
-		regArr[3] = 0;
-		regArr[4] = 0;
-		regArr[5] = 0;
-		regArr[6] = 0;
-		regArr[7] = 0;
-                return regArr;
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 1;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
+				return regArr;
             }
             if (button == 4)
             {
-                regArr[0] = 0;
-                regArr[1] = 0;
-                regArr[2] = 0;
-		regArr[3] = 1;
-		regArr[4] = 0;
-		regArr[5] = 0;
-		regArr[6] = 0;
-		regArr[7] = 0;
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 1;
+				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 5)
             {
-		regArr[0] = 0;
-		regArr[1] = 0;
-		regArr[2] = 0;
-		regArr[3] = 0;
-		regArr[4] = 1;
-		regArr[5] = 0;
-		regArr[6] = 0;
-		regArr[7] = 0;
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 1;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 6)
             {
-		regArr[0] = 0;
-		regArr[1] = 0;
-		regArr[2] = 0;
-		regArr[3] = 0;
-		regArr[4] = 0;
-		regArr[5] = 1;
-		regArr[6] = 0;
-		regArr[7] = 0;
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 1;
+				regArr[6] = 0;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 7)
             {
-		regArr[0] = 0;
-		regArr[1] = 0;
-		regArr[2] = 0;
-		regArr[3] = 0;
-		regArr[4] = 0;
-		regArr[5] = 0;
-		regArr[6] = 1;
-		regArr[7] = 0;
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 1;
+				regArr[7] = 0;
                 return regArr;
             }
             if (button == 8)
             {
-		regArr[0] = 0;
-		regArr[1] = 0;
-		regArr[2] = 0;
-		regArr[3] = 0;
-		regArr[4] = 0;
-		regArr[5] = 0;
-		regArr[6] = 0;
-		regArr[7] = 1;
+				regArr[0] = 0;
+				regArr[1] = 0;
+				regArr[2] = 0;
+				regArr[3] = 0;
+				regArr[4] = 0;
+				regArr[5] = 0;
+				regArr[6] = 0;
+				regArr[7] = 1;
                 return regArr;
             }
         }
-    }
+*/    }
 /*    if (checkHowManyOn == 2 && button < 4)
     {
         regArr[0] = 0;
@@ -231,17 +231,35 @@ function createLcdString(arrei, isTx)
       tempString += "&nbsp;";
    tempString += "5&nbsp;";
 
+   if (arrei[5]==1)
+      tempString += "*";
+   else
+      tempString += "&nbsp;";
+   tempString += "6&nbsp;";
+
+   if (arrei[6]==1)
+      tempString += "*";
+   else
+      tempString += "&nbsp;";
+   tempString += "7&nbsp;";
+
+   if (arrei[7]==1)
+      tempString += "*";
+   else
+      tempString += "&nbsp;";
+   tempString += "8&nbsp;";
+
    if(!isTx)
       $('#myRxString').html(tempString);
    else
       $('#myTxString').html(tempString);
 }
 
-function setButtons(arr) { // override setbuttons
+function setButtons(arr) { // override setbuttons //maj la page web depuis le web                                                      
 
-    var checkOne = verifyButtons(arr, 4);
+    var checkOne = verifyButtons(arr, 6);
 
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 6 ; i++) {	//tant que 5 boutons on s'arrete avant 6
 
         if (i == 3 && checkOne == 3)
             setButton(i, 0);
