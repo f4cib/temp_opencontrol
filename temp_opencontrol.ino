@@ -107,11 +107,13 @@ const char  message6[] PROGMEM = { "<link rel = \"shortcut icon\" href=\"http://
 const char  message7[] PROGMEM = { "</head>" };
 const char  message8[] PROGMEM = { "<body>" };
 const char  message9[] PROGMEM = { "<div id=\"container\">" };
+// Beverage Table
 const char  message10[] PROGMEM = { "<div class=\"myTab\">" };
 const char  message101[] PROGMEM = { "<table class=\"myTable_bev\"> <tr> <td> </td> <td> <a id=\"bev1\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev1)\"> </a> </td> <td> </td> <td> <a id=\"bev2\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev2)\"> </a> </td> <td> </td> </tr> "};
 const char  message102[] PROGMEM = { "<tr> <td> <a id=\"bev3\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev3)\"> </a> </td> <td> </td> <td> <a id=\"b0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a> </td> <td> </td> <td> <a id=\"bev4\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev4)\"> </a> </td> </tr> "};
 const char  message103[] PROGMEM = { "<tr> <td> </td> <td> <a id=\"bev5\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev5)\"> </a> </td> <td> </td> <td> <a id=\"bev6\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev6)\"> </a> </td> <td> </td> </tr> </table> "};
 const char  message104[] PROGMEM = { "</div> <div class=\"myTab\">" };
+// Tx antenna Table
 const char  message11[] PROGMEM = { "<table class=\"myTable\">" };
 const char  message12[] PROGMEM = { "<tr><td><a id=\"b0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a></td>" };
 const char  message13[] PROGMEM = { "<td><a id=\"b1\" href=\"#\" class=\"myButton\" onClick=\"clkButton(1)\"> </a></td>" };
@@ -119,6 +121,8 @@ const char  message14[] PROGMEM = { "<td><a id=\"b2\" href=\"#\" class=\"myButto
 const char  message15[] PROGMEM = { "<td><a id=\"b3\" href=\"#\" class=\"myButton\" onClick=\"clkButton(3)\"> </a></td>" };
 const char  message151[] PROGMEM = { "<td><a id=\"b4\" href=\"#\" class=\"myButton\" onClick=\"clkButton(4)\"> </a></td>" }; 
 const char  message152[] PROGMEM = { "<td><a id=\"b5\" href=\"#\" class=\"myButton\" onClick=\"clkButton(5)\"> </a></td>" }; 
+const char  message153[] PROGMEM = { "<td><a id=\"b6\" href=\"#\" class=\"myButton\" onClick=\"clkButton(6)\"> </a></td>" }; 
+const char  message154[] PROGMEM = { "<td><a id=\"b7\" href=\"#\" class=\"myButton\" onClick=\"clkButton(7)\"> </a></td>" }; 
 const char  message16[] PROGMEM = { "<td align=\"center\"><a id=\"b9\" href=\"#\" class=\"myButton right\" onClick=\"clkButton(9)\"> </a></td>" };    //Tx button
 const char  message17[] PROGMEM = { "</tr>" };
 const char  message18[] PROGMEM = { "</table>" };
@@ -145,7 +149,7 @@ const char  message22[] PROGMEM = { "</body>" };
 const char  message24[] PROGMEM = { "getAllContent();window.setTimeout(updateLCD,150);</script>" };
 const char  message25[] PROGMEM = { "</html>" };
 
-const byte webArraySize = 32;
+const byte webArraySize = 35;
 
 const char * const messages[webArraySize] PROGMEM =
 {
@@ -171,6 +175,8 @@ const char * const messages[webArraySize] PROGMEM =
   message15,
   message151,
   message152,
+  message153,
+  message154,
   message16,
   message17,
   message18,
