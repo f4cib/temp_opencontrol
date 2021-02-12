@@ -1,4 +1,5 @@
-// one button added for beverages Tx Set is now button 9
+// 6 buttons for our needs (can be increased up to 8 with some described mods) 
+// Tx Set is now button 9
 // function setButton_bev added to deal with css when hovering beverages direction buttons
 var isTxEditMode = false;
 var txArray = [];
@@ -30,7 +31,7 @@ function fillArrays(stringRx, stringTx)
 
 function setButtons(arr)	//cette fonction maj le statut des boutons du web
 {
-	for(var i=0; i<6; i++) //tant que 5 boutons on va pas plus loin que 6
+	for(var i=0; i<7; i++) //tant que 6 boutons on va pas plus loin que 7
 	{		
 		setButton(i, arr[i]);
 	}	

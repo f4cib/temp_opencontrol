@@ -8,11 +8,11 @@ function setRegisterArray(button, regArr)
     if (regArr[button - 1] == 1)
         isSameKeyPressed = true;
 
-    if (checkHowManyOn == 1 && button < 8) //je ne veux qu'un bouton a la fois
+    if (checkHowManyOn == 1 && button < 8) // I want only one button at once
     {
         if (isSameKeyPressed == false)
         {
-			regArr[0] = 0;
+			regArr[0] = 0;					// Set all array to 0
 			regArr[1] = 0;
 			regArr[2] = 0;
 			regArr[3] = 0;
@@ -20,109 +20,10 @@ function setRegisterArray(button, regArr)
 			regArr[5] = 0;
 			regArr[6] = 0;
 			regArr[7] = 0;
-			regArr[button - 1] = 1;
+			regArr[button - 1] = 1;			// then set to 1 only pressed button
             return regArr;
         }
-/*       else
-        {
-           if (button == 1)
-            {
-				regArr[0] = 1;
-				regArr[1] = 0;
-				regArr[2] = 0;
-				regArr[3] = 0;
-				regArr[4] = 0;
-				regArr[5] = 0;
-				regArr[6] = 0;
-				regArr[7] = 0;
-                return regArr;
-            }
-            if (button == 2)
-            {
-				regArr[0] = 0;
-				regArr[1] = 1;
-				regArr[2] = 0;
-				regArr[3] = 0;
-				regArr[4] = 0;
-				regArr[5] = 0;
-				regArr[6] = 0;
-				regArr[7] = 0;
-                return regArr;
-            }
-            if (button == 3)
-            {
-				regArr[0] = 0;
-				regArr[1] = 0;
-				regArr[2] = 1;
-				regArr[3] = 0;
-				regArr[4] = 0;
-				regArr[5] = 0;
-				regArr[6] = 0;
-				regArr[7] = 0;
-				return regArr;
-            }
-            if (button == 4)
-            {
-				regArr[0] = 0;
-				regArr[1] = 0;
-				regArr[2] = 0;
-				regArr[3] = 1;
-				regArr[4] = 0;
-				regArr[5] = 0;
-				regArr[6] = 0;
-				regArr[7] = 0;
-                return regArr;
-            }
-            if (button == 5)
-            {
-				regArr[0] = 0;
-				regArr[1] = 0;
-				regArr[2] = 0;
-				regArr[3] = 0;
-				regArr[4] = 1;
-				regArr[5] = 0;
-				regArr[6] = 0;
-				regArr[7] = 0;
-                return regArr;
-            }
-            if (button == 6)
-            {
-				regArr[0] = 0;
-				regArr[1] = 0;
-				regArr[2] = 0;
-				regArr[3] = 0;
-				regArr[4] = 0;
-				regArr[5] = 1;
-				regArr[6] = 0;
-				regArr[7] = 0;
-                return regArr;
-            }
-            if (button == 7)
-            {
-				regArr[0] = 0;
-				regArr[1] = 0;
-				regArr[2] = 0;
-				regArr[3] = 0;
-				regArr[4] = 0;
-				regArr[5] = 0;
-				regArr[6] = 1;
-				regArr[7] = 0;
-                return regArr;
-            }
-            if (button == 8)
-            {
-				regArr[0] = 0;
-				regArr[1] = 0;
-				regArr[2] = 0;
-				regArr[3] = 0;
-				regArr[4] = 0;
-				regArr[5] = 0;
-				regArr[6] = 0;
-				regArr[7] = 1;
-                return regArr;
-            }
-        }
-*/    }
+    }
 /*    if (checkHowManyOn == 2 && button < 4)
     {
         regArr[0] = 0;
@@ -132,7 +33,7 @@ function setRegisterArray(button, regArr)
         return regArr;
     }
 */
-    if (checkHowManyOn == 1 && button == 4)
+/*    if (checkHowManyOn == 1 && button == 4)
     {
         toggleRegisterArray(regArr, 1);
         return regArr;
@@ -177,7 +78,7 @@ function setRegisterArray(button, regArr)
         regArr[3] = 1;
         return regArr;
     }
-
+*/
 }
 
 function createLcdString(arrei, isTx)
@@ -237,9 +138,9 @@ function createLcdString(arrei, isTx)
       tempString += "&nbsp;";
    tempString += "6&nbsp;";
 
-   if (arrei[6]==1)
-      tempString += "*";
-   else
+/*   if (arrei[6]==1)						// uncomment if you need more buttons
+      tempString += "*";					// but you will need to update setButton(arr) function below and in c.js
+   else										// buttons have to be added as well in Arduino code
       tempString += "&nbsp;";
    tempString += "7&nbsp;";
 
@@ -248,18 +149,18 @@ function createLcdString(arrei, isTx)
    else
       tempString += "&nbsp;";
    tempString += "8&nbsp;";
-
+*/
    if(!isTx)
-      $('#myRxString').html(tempString);
+      $('#myRxString').html(tempString);	// build Rx string for the web pseudo LCD
    else
-      $('#myTxString').html(tempString);
+      $('#myTxString').html(tempString);	// build Tx string for the web pseudo LCD
 }
 
-function setButtons(arr) { // override setbuttons //maj la page web depuis le web                                                      
+function setButtons(arr) { 					// override setbuttons here we set the buttons for html server                                                      
 
-    var checkOne = verifyButtons(arr, 6);
+    var checkOne = verifyButtons(arr, 6); 	// I use 6 buttons
 
-    for (var i = 0; i < 6 ; i++) {	//tant que 5 boutons on s'arrete avant 6
+    for (var i = 0; i < 6 ; i++) {			// Stop the loop before 6 for 6 buttons
 
         if (i == 3 && checkOne == 3)
             setButton(i, 0);

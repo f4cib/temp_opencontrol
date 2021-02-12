@@ -23,13 +23,13 @@
 
 #define I2C_ADDR    0x20  // Define I2C Address for controller
 #define BACKLIGHT_PIN  7
-#define En_pin  4
-#define Rw_pin  5
-#define Rs_pin  6
-#define D4_pin  0
-#define D5_pin  1
-#define D6_pin  2
-#define D7_pin  3
+//#define En_pin  4
+//#define Rw_pin  5
+//#define Rs_pin  6
+//#define D4_pin  0
+//#define D5_pin  1
+//#define D6_pin  2
+//#define D7_pin  3
 
 #define  LED_OFF  0
 #define  LED_ON  1
@@ -72,8 +72,8 @@ boolean registersDisplay[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 #endif
 
 #if SKETCHMODE == 3
-  String rxDisplayArray[7] = { "Beverage   ", "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "Vert R8    ", "WARC Ant   "};
-  String txDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ",  "80M dipole", "Vert R8    ", "WARC Ant   " };
+  String rxDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "Vert R8    ", "WARC Ant   "};
+  String txDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "Vert R8    ", "WARC Ant   " };
 #endif
 
 /////////////////////////////////////// WWW Content for PROGMEM ////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ const char  message9[] PROGMEM = { "<div id=\"container\">" };
 // Beverage Table
 const char  message10[] PROGMEM = { "<div class=\"myTab\">" };
 const char  message101[] PROGMEM = { "<table class=\"myTable_bev\"> <tr> <td> </td> <td> <a id=\"bev1\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev1)\"> </a> </td> <td> </td> <td> <a id=\"bev2\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev2)\"> </a> </td> <td> </td> </tr> "};
-const char  message102[] PROGMEM = { "<tr> <td> <a id=\"bev3\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev3)\"> </a> </td> <td> </td> <td> <a id=\"b0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a> </td> <td> </td> <td> <a id=\"bev4\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev4)\"> </a> </td> </tr> "};
+const char  message102[] PROGMEM = { "<tr> <td> <a id=\"bev3\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev3)\"> </a> </td> <td> </td> <td> <a id=\"bev0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a> </td> <td> </td> <td> <a id=\"bev4\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev4)\"> </a> </td> </tr> "};
 const char  message103[] PROGMEM = { "<tr> <td> </td> <td> <a id=\"bev5\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev5)\"> </a> </td> <td> </td> <td> <a id=\"bev6\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev6)\"> </a> </td> <td> </td> </tr> </table> "};
 const char  message104[] PROGMEM = { "</div> <div class=\"myTab\">" };
 // Tx antenna Table
@@ -169,14 +169,14 @@ const char * const messages[webArraySize] PROGMEM =
   message103,
   message104,
   message11,
-//message12,
+  message12,
   message13,
   message14,
   message15,
   message151,
   message152,
-  message153,
-  message154,
+//  message153,
+//  message154,
   message16,
   message17,
   message18,
@@ -641,20 +641,20 @@ byte getPressedButton() // F4CIB updated these value for my own voltage divider 
   int c = getMyAverageValue();
   if (c < 10 && c >= 0)
     return 1;
-  else if (c > 190 && c < 220)
+  else if (c > 160 && c < 200)    //179
     return 2;
-  else if (c > 375 && c < 405)
+  else if (c > 285 && c < 325)    //305
     return 3;
-  else if (c > 580 && c < 610)
+  else if (c > 415 && c < 455)    //436
     return 4;
-  else if (c > 775 && c < 795)  // F4CIB added some butons as well
+  else if (c > 540 && c < 580)    //560 F4CIB added some butons as well
     return 5;
-//  else if (c > 775 && c < 795)  // F4CIB added some butons as well //F4CIB system will be capable of handling 8 relay let's prepare the code
-//    return 6;
-//  else if (c > 775 && c < 795)  // F4CIB added some butons as well
-//    return 7;
-//  else if (c > 775 && c < 795)  // F4CIB added some butons as well
-//    return 8;
+  else if (c > 650 && c < 690)  //672 F4CIB added some butons as well //F4CIB system will be capable of handling 8 relay let's prepare the code
+    return 6;
+  else if (c > 755 && c < 795)  //773 F4CIB added some butons as well
+    return 7;
+  else if (c > 850 && c < 890)  //869 F4CIB added some butons as well
+    return 8;
   else
     return 0;
 }
