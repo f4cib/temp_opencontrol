@@ -23,13 +23,13 @@
 
 #define I2C_ADDR    0x20  // Define I2C Address for controller
 #define BACKLIGHT_PIN  7
-#define En_pin  4
-#define Rw_pin  5
-#define Rs_pin  6
-#define D4_pin  0
-#define D5_pin  1
-#define D6_pin  2
-#define D7_pin  3
+//#define En_pin  4
+//#define Rw_pin  5
+//#define Rs_pin  6
+//#define D4_pin  0
+//#define D5_pin  1
+//#define D6_pin  2
+//#define D7_pin  3
 
 #define  LED_OFF  0
 #define  LED_ON  1
@@ -42,15 +42,15 @@ byte mac[] = { 0xDE, 0x7D, 0xBE, 0xEF, 0xFE, 0xED };  //************************
 
 ////////////////////////////////   CONFIGURE YOUR DEFAULT DETTINGS HERE   /////////////////////////////////////////////
 
-byte ip[] = { 192, 168, 1, 179 };           //*************************************************** <------------------------CHANGE ARDOINOs IP TO YOUR NEEDs - DONT FORGET TO CHANGE IT EVERYWHERE (see comments WWW Content for PROGMEM) !!!!!!           
-byte gateway[] = { 192, 168, 1, 1 };
+byte ip[] = { 10, 0, 0, 179 };           //*************************************************** <------------------------CHANGE ARDOINOs IP TO YOUR NEEDs - DONT FORGET TO CHANGE IT EVERYWHERE (see comments WWW Content for PROGMEM) !!!!!!           
+byte gateway[] = { 10, 0, 0, 1 };
 byte subnet[] = { 255, 255, 255, 0 };
 EthernetServer server(80);                  //*************************************************** <------------------------CHANGE PORT, IF YOU DONT LIKE PORT 80           
 //F4CIB extended size of these 5 following registers from 4 to 8
 boolean registersRx[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
-boolean registersTx[8] = { 1, 1, 0, 0, 0, 0, 0, 0 };
+boolean registersTx[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 boolean registersRxLed[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
-boolean registersTxLed[8] = { 1, 1, 0, 0, 0, 0, 0, 0 };
+boolean registersTxLed[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 boolean registersDisplay[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 
 
@@ -72,8 +72,8 @@ boolean registersDisplay[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 #endif
 
 #if SKETCHMODE == 3
-  String rxDisplayArray[5] = { "Beverage   ", "Matrice    ", "Auxiliaire1", "Auxiliaire2", "Auxiliaire3" };
-  String txDisplayArray[4] = { "Matrice    ", "40M 2 ele  ", "20M Africa ",  "80M dipole" };
+  String rxDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "Vert R8    ", "WARC Ant   "};
+  String txDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "Vert R8    ", "WARC Ant   " };
 #endif
 
 /////////////////////////////////////// WWW Content for PROGMEM ////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +82,7 @@ const char  message0[] PROGMEM = { "<html><head>" };
 const char  message1[] PROGMEM = { "<script type=\"text/javascript\" src=\"http://code.jquery.com/jquery-1.11.3.js\">" };      //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 const char  message2[] PROGMEM = { "</script>" };
 const char  message3[] PROGMEM = { "<script type='text/javascript' src='http://f4cib.free.fr/dm5xx/c.js'></script>" };            //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+//const char  message3[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/c.js'></script>" };            //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 
 #if SKETCHMODE == 0
   const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
@@ -97,21 +98,32 @@ const char  message3[] PROGMEM = { "<script type='text/javascript' src='http://f
 
 #if SKETCHMODE == 3
   const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://f4cib.free.fr/dm5xx/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+//  const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 #endif
 
 const char  message5[] PROGMEM = { "<link href=\"http://f4cib.free.fr/dm5xx/c.css\" rel=\"stylesheet\" type=\"text/css\"/>" };    //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+//const char  message5[] PROGMEM = { "<link href=\"http://h.mmmedia-online.de/c.css\" rel=\"stylesheet\" type=\"text/css\"/>" };    //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 const char  message6[] PROGMEM = { "<link rel = \"shortcut icon\" href=\"http://h.mmmedia-online.de/favicon.ico\">" };
 const char  message7[] PROGMEM = { "</head>" };
 const char  message8[] PROGMEM = { "<body>" };
 const char  message9[] PROGMEM = { "<div id=\"container\">" };
+// Beverage Table
 const char  message10[] PROGMEM = { "<div class=\"myTab\">" };
+const char  message101[] PROGMEM = { "<table class=\"myTable_bev\"> <tr> <td> </td> <td> <a id=\"bev1\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev1)\"> </a> </td> <td> </td> <td> <a id=\"bev2\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev2)\"> </a> </td> <td> </td> </tr> "};
+const char  message102[] PROGMEM = { "<tr> <td> <a id=\"bev3\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev3)\"> </a> </td> <td> </td> <td> <a id=\"bev0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a> </td> <td> </td> <td> <a id=\"bev4\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev4)\"> </a> </td> </tr> "};
+const char  message103[] PROGMEM = { "<tr> <td> </td> <td> <a id=\"bev5\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev5)\"> </a> </td> <td> </td> <td> <a id=\"bev6\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev6)\"> </a> </td> <td> </td> </tr> </table> "};
+const char  message104[] PROGMEM = { "</div> <div class=\"myTab\">" };
+// Tx antenna Table
 const char  message11[] PROGMEM = { "<table class=\"myTable\">" };
 const char  message12[] PROGMEM = { "<tr><td><a id=\"b0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a></td>" };
 const char  message13[] PROGMEM = { "<td><a id=\"b1\" href=\"#\" class=\"myButton\" onClick=\"clkButton(1)\"> </a></td>" };
 const char  message14[] PROGMEM = { "<td><a id=\"b2\" href=\"#\" class=\"myButton\" onClick=\"clkButton(2)\"> </a></td>" };
 const char  message15[] PROGMEM = { "<td><a id=\"b3\" href=\"#\" class=\"myButton\" onClick=\"clkButton(3)\"> </a></td>" };
-const char  message151[] PROGMEM = { "<td><a id=\"b8\" href=\"#\" class=\"myButton\" onClick=\"clkButton(8)\"> </a></td>" };    //Tx button 
-const char  message16[] PROGMEM = { "<td align=\"center\"><a id=\"b5\" href=\"#\" class=\"myButton right\" onClick=\"clkButton(5)\"> </a></td>" };
+const char  message151[] PROGMEM = { "<td><a id=\"b4\" href=\"#\" class=\"myButton\" onClick=\"clkButton(4)\"> </a></td>" }; 
+const char  message152[] PROGMEM = { "<td><a id=\"b5\" href=\"#\" class=\"myButton\" onClick=\"clkButton(5)\"> </a></td>" }; 
+const char  message153[] PROGMEM = { "<td><a id=\"b6\" href=\"#\" class=\"myButton\" onClick=\"clkButton(6)\"> </a></td>" }; 
+const char  message154[] PROGMEM = { "<td><a id=\"b7\" href=\"#\" class=\"myButton\" onClick=\"clkButton(7)\"> </a></td>" }; 
+const char  message16[] PROGMEM = { "<td align=\"center\"><a id=\"b9\" href=\"#\" class=\"myButton right\" onClick=\"clkButton(9)\"> </a></td>" };    //Tx button
 const char  message17[] PROGMEM = { "</tr>" };
 const char  message18[] PROGMEM = { "</table>" };
 const char  message19[] PROGMEM = { "</div>" };
@@ -130,13 +142,14 @@ const char  message22[] PROGMEM = { "</body>" };
   const char  message23[] PROGMEM = { "<script>var urlToArduino='http://192.168.1.179';$('#container').css(\"background-image\", \"url(http://h.mmmedia-online.de/stack.png)\"); " }; //********UNCOMMENT/COMMENT NEEDED VERSION: Stack***************** <------------------------CHANGE to Arduino AND File-Location URL IF NEEDED !!!!!!
 #endif
 #if SKETCHMODE == 3
-  const char  message23[] PROGMEM = { "<script>var urlToArduino='http://192.168.1.179';$('#container').css(\"background-image\", \"url(http://h.mmmedia-online.de/multi.png)\"); " }; //********UNCOMMENT/COMMENT NEEDED VERSION: Multibeaming************ <------------------------CHANGE to Arduino AND File-Location URL IF NEEDED !!!!!!
+//  const char  message23[] PROGMEM = { "<script>var urlToArduino='http://192.168.1.179';$('#container').css(\"background-image\", \"url(http://f4cib.free.fr/dm5xx/multi_F6KNB.jpg)\"); " }; //********UNCOMMENT/COMMENT NEEDED VERSION: Multibeaming************ <------------------------CHANGE to Arduino AND File-Location URL IF NEEDED !!!!!!
+  const char  message23[] PROGMEM = { "<script>var urlToArduino='http://f4cib.ddns.net:8074';$('#container').css(\"background-image\", \"url(http://f4cib.free.fr/dm5xx/multi_F6KNB.jpg)\"); " }; //********UNCOMMENT/COMMENT NEEDED VERSION: Multibeaming************ <------------------------CHANGE to Arduino AND File-Location URL IF NEEDED !!!!!!
 #endif
 
 const char  message24[] PROGMEM = { "getAllContent();window.setTimeout(updateLCD,150);</script>" };
 const char  message25[] PROGMEM = { "</html>" };
 
-const byte webArraySize = 27;
+const byte webArraySize = 35;
 
 const char * const messages[webArraySize] PROGMEM =
 {
@@ -151,12 +164,19 @@ const char * const messages[webArraySize] PROGMEM =
   message8,
   message9,
   message10,
+  message101,
+  message102,
+  message103,
+  message104,
   message11,
   message12,
   message13,
   message14,
   message15,
   message151,
+  message152,
+//  message153,
+//  message154,
   message16,
   message17,
   message18,
@@ -434,7 +454,7 @@ void writeRelayRegister(boolean registers[])
 
   digitalWrite(STCP_pin, LOW);
 
-  for (int i = 15; i >= 0; i--) // F4CIB from 7 to 16
+  for (int i = 15; i >= 0; i--) // F4CIB from 7 to 15
   {
     if (i < 8 && isInRelayInvertMode) // from 4 to 8 not sure what it does here...
     {
@@ -517,6 +537,8 @@ String getStringPartByNr(String data, char separator, int index)
       break;
     }
   }
+  Serial.print("datapart ");
+  Serial.println(dataPart);
   return dataPart;
 }
 
@@ -619,20 +641,20 @@ byte getPressedButton() // F4CIB updated these value for my own voltage divider 
   int c = getMyAverageValue();
   if (c < 10 && c >= 0)
     return 1;
-  else if (c > 190 && c < 220)
+  else if (c > 160 && c < 200)    //179
     return 2;
-  else if (c > 375 && c < 405)
+  else if (c > 285 && c < 325)    //305
     return 3;
-  else if (c > 580 && c < 610)
+  else if (c > 415 && c < 455)    //436
     return 4;
-  else if (c > 775 && c < 795)  // F4CIB added some butons as well
+  else if (c > 540 && c < 580)    //560 F4CIB added some butons as well
     return 5;
-//  else if (c > 775 && c < 795)  // F4CIB added some butons as well //F4CIB system will be capable of handling 8 relay let's prepare the code
-//    return 6;
-//  else if (c > 775 && c < 795)  // F4CIB added some butons as well
-//    return 7;
-//  else if (c > 775 && c < 795)  // F4CIB added some butons as well
-//    return 8;
+  else if (c > 650 && c < 690)  //672 F4CIB added some butons as well //F4CIB system will be capable of handling 8 relay let's prepare the code
+    return 6;
+  else if (c > 755 && c < 795)  //773 F4CIB added some butons as well
+    return 7;
+  else if (c > 850 && c < 890)  //869 F4CIB added some butons as well
+    return 8;
   else
     return 0;
 }
@@ -680,6 +702,7 @@ void webServer()
           if (cmdSet >= 0)
           {
             byte currentBank = getStringPartByNr(requestString, '/', 2).toInt(); // the 2nd part is the bank-number
+            Serial.print("currentBank puis currentPinString et enfin myString ");
             Serial.println(currentBank);
             String currentPinString = getStringPartByNr(requestString, '/', 3); // the 3nd part is the decimal-value to react on
             Serial.println(currentPinString);
@@ -734,6 +757,7 @@ void getStatus(EthernetClient client)
   client.println();
   client.print("xx({\"v\": \"");
   client.print(arrRx);
+  Serial.print("arrRx puis arrTx ");//F4CIB
   Serial.println(arrRx);//F4CIB
   client.print("|");
   client.print(arrTx);
