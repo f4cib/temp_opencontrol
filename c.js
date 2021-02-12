@@ -1,4 +1,5 @@
-// one button added for beverages Tx Set is now button 9
+// 6 buttons for our needs (can be increased up to 8 with some described mods) 
+// Tx Set is now button 9
 // function setButton_bev added to deal with css when hovering beverages direction buttons
 var isTxEditMode = false;
 var txArray = [];
@@ -20,7 +21,7 @@ var myResponseHandler = function(data) {
 
 function fillArrays(stringRx, stringTx)
 {
-	for(var i=0; i<9; i++)
+	for(var i=0; i<8; i++)
 	{
 		rxArray[i] = stringRx[i].charCodeAt()-48;
 		txArray[i] = stringTx[i].charCodeAt()-48;
@@ -28,15 +29,15 @@ function fillArrays(stringRx, stringTx)
 }
 
 
-function setButtons(arr)
+function setButtons(arr)	//cette fonction maj le statut des boutons du web
 {
-	for(var i=0; i<9; i++)
+	for(var i=0; i<7; i++) //tant que 6 boutons on va pas plus loin que 7
 	{		
 		setButton(i, arr[i]);
 	}	
 }
 
-function setButton(btnNr, expo)
+	function setButton(btnNr, expo)
 {
 	var buttonname = 'b'+btnNr;
 
@@ -48,11 +49,10 @@ function setButton(btnNr, expo)
 			
 	if(expo == 0)
 	{
-		var offbut = document.getElementById(buttonname);
+	var offbut = document.getElementById(buttonname);
 		offbut.className = "myButton right boff";
 	};
 }
-
 function setButton_bev(btnNr, expo)
 {
 	var buttonname = 'bev'+btnNr;
