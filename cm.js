@@ -23,6 +23,7 @@ function setRegisterArray(button, regArr)
 			regArr[button - 1] = 1;			// then set to 1 only pressed button
             return regArr;
         }
+		return regArr;
     }
 /*    if (checkHowManyOn == 2 && button < 4)
     {

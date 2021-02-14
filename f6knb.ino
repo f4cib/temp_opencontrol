@@ -148,9 +148,9 @@ void setDisplay(boolean regArry[], byte row)
   {
     for (byte i = 7; i >= 0; i--)       //F4CIB from 3 to 7
     {
-      if (regArry[i] == 1)
+      if (regArry[i] == 1)              // We look for value set to 1 in registersRxLed
       {
-        lcd.print(rxDisplayArray[i]);
+        lcd.print(rxDisplayArray[i]);   // and then we display its label on HW LCD
         return;
       }   
     }
@@ -158,40 +158,40 @@ void setDisplay(boolean regArry[], byte row)
   else
   {
     int sum = 0;
-    sum = verifyButtons(regArry, 8);    //from 4 to 5 buttons can be up to 8
-    Serial.print("su - nb of buttons selected ");   //F4CIB added " - nb of buttons selected " for better readability but I guess this Serial.print need to be commented to fasten program execution
+    sum = verifyButtons(regArry, 8);      // from 4 to 5 buttons can be up to 8 // returns numbers of buttons active. must return always 1 due to code change. (only one button at one time)
+    Serial.print("sum - nb of buttons selected ");
     Serial.println(sum);
 
-    if (sum == 1 || sum > 2) // do not understand this double condition if less than 2 it must be 1, no ?
+    if (sum == 1 || sum > 2)
     {
-      for (byte i = 7; i >= 0; i--)   // from 3 to 7 but in Tx never go to 1 which are bev from 0 to 1 (maybenot switched back to 0
+      for (byte i = 7; i >= 0; i--)       // from 3 to 7 but in Tx never go to 1 which are bev from 0 to 1 (maybenot switched back to 0
       {
-        if (regArry[i] == 1)
+        if (regArry[i] == 1)              // we look for value set to 1 in registerTxLed
         {
-          lcd.print(txDisplayArray[i]);
+          lcd.print(txDisplayArray[i]);   // and we display its label on HW LCD
           return;
         }
       }
     }
-    else  //F4CIB only one button we should not go here
-    {
-      if (regArry[0] == 1 && regArry[1] == 1)
-      {
-        lcd.print(txDisplayArray[4]);
-        return;
-      }
-      if (regArry[0] == 1 && regArry[2] == 1)
-      {
-        lcd.print(txDisplayArray[5]);
-        return;
-      }
-      if (regArry[1] == 1 && regArry[2] == 1)
-      {
-        lcd.print(txDisplayArray[6]);
-        return;
-      }
-    }
-
+//    else  //F4CIB only one button we should not go here
+//    {
+//      if (regArry[0] == 1 && regArry[1] == 1)
+//      {
+//        lcd.print(txDisplayArray[4]);
+//        return;
+//      }
+//      if (regArry[0] == 1 && regArry[2] == 1)
+//      {
+//        lcd.print(txDisplayArray[5]);
+//        return;
+//      }
+//      if (regArry[1] == 1 && regArry[2] == 1)
+//      {
+//        lcd.print(txDisplayArray[6]);
+//        return;
+//      }
+//    }
+//
   }
 }
 #endif

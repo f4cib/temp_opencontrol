@@ -20,8 +20,9 @@
 #include <avr/pgmspace.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>  // F Malpartida's NewLiquidCrystal library
+#include "PCF8574.h"
 
-#define I2C_ADDR    0x20  // Define I2C Address for controller
+#define I2C_ADDR    0x38        // Define I2C Address for Beverage controller
 #define BACKLIGHT_PIN  7
 //#define En_pin  4
 //#define Rw_pin  5
@@ -37,24 +38,27 @@
 #define SKETCHMODE 3         // 0 = multibeaming / 1 = stack2 / 2 = stack3 / 3 = f6knb => this will enable the needed files for each mode... nothing more to do than to change
 
 //LiquidCrystal_I2C  lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
+
+PCF8574 I2C_BEV(I2C_ADDR);
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 byte mac[] = { 0xDE, 0x7D, 0xBE, 0xEF, 0xFE, 0xED };  //**************************************** <-------------------------CHANGE MAC-ADRESS IF YOU HAVE MORE THAN 1 CONTROLLER
 
 ////////////////////////////////   CONFIGURE YOUR DEFAULT DETTINGS HERE   /////////////////////////////////////////////
 
-byte ip[] = { 10, 0, 0, 179 };           //*************************************************** <------------------------CHANGE ARDOINOs IP TO YOUR NEEDs - DONT FORGET TO CHANGE IT EVERYWHERE (see comments WWW Content for PROGMEM) !!!!!!           
+byte ip[] = { 10, 0, 0, 179 };                        //*************************************************** <------------------------CHANGE ARDOINOs IP TO YOUR NEEDs - DONT FORGET TO CHANGE IT EVERYWHERE (see comments WWW Content for PROGMEM) !!!!!!           
 byte gateway[] = { 10, 0, 0, 1 };
 byte subnet[] = { 255, 255, 255, 0 };
-EthernetServer server(80);                  //*************************************************** <------------------------CHANGE PORT, IF YOU DONT LIKE PORT 80           
+EthernetServer server(80);                            //*************************************************** <------------------------CHANGE PORT, IF YOU DONT LIKE PORT 80           
 //F4CIB extended size of these 5 following registers from 4 to 8
-boolean registersRx[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
-boolean registersTx[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
-boolean registersRxLed[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
-boolean registersTxLed[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
-boolean registersDisplay[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
+boolean registersRx[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };		  // Rx buttons
+boolean registersTx[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };		  // Tx buttons
+boolean registersRxLed[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };		// Rx LED
+boolean registersTxLed[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };		// Tx LED
+boolean registersDisplay[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };	// LCD String display here you point to rxDisplayArray or txDisplayArray labels
+boolean registersBev[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };     // Beverage buttons
+boolean registersBevLed[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };  // Beverage LED
 
-
-///////////////////////////////////////// CHange the labels you want to have... there are about 11 chars left. so dont use longer labels than 11 chars...
+///////////////////////////////////////// Change the labels you want to have... there are about 11 chars left. so dont use longer labels than 11 chars...
 
 #if SKETCHMODE == 0
   String rxDisplayArray[4] = { "Beam USA", "Beam AF", "Beam JA",  "Beam All" };
@@ -72,8 +76,9 @@ boolean registersDisplay[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 #endif
 
 #if SKETCHMODE == 3
-  String rxDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "Vert R8    ", "WARC Ant   "};
-  String txDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "Vert R8    ", "WARC Ant   " };
+  String rxDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "40-6M R8   ", "30-10M Quad"};
+  String txDisplayArray[6] = { "Matrice    ", "40M 2 ele  ", "20M Africa ", "80M dipole", "40-6M R8   ", "30-10M Quad" };
+  char* bevDisplayArray[] = { "NW", "NE", "W", "E", "SW", "SE"};
 #endif
 
 /////////////////////////////////////// WWW Content for PROGMEM ////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,24 +86,24 @@ boolean registersDisplay[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 const char  message0[] PROGMEM = { "<html><head>" };
 const char  message1[] PROGMEM = { "<script type=\"text/javascript\" src=\"http://code.jquery.com/jquery-1.11.3.js\">" };      //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 const char  message2[] PROGMEM = { "</script>" };
-const char  message3[] PROGMEM = { "<script type='text/javascript' src='http://f4cib.free.fr/dm5xx/c.js'></script>" };            //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
-//const char  message3[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/c.js'></script>" };            //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+const char  message3[] PROGMEM = { "<script type='text/javascript' src='http://f4cib.free.fr/dm5xx/c.js'></script>" };         //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+//const char  message3[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/c.js'></script>" };        //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 
 #if SKETCHMODE == 0
-  const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+  const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cm.js'></script>" };      //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 #endif
 
 #if SKETCHMODE == 1
-  const char  message4[] PROGMEM  = {"<script type='text/javascript' src='http://h.mmmedia-online.de/cs2.js'></script>"};        //******** Stack 2 Ant************ <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+  const char  message4[] PROGMEM  = {"<script type='text/javascript' src='http://h.mmmedia-online.de/cs2.js'></script>"};      //******** Stack 2 Ant************ <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 #endif
 
 #if SKETCHMODE == 2
-  const char  message4[] PROGMEM  = {"<script type='text/javascript' src='http://h.mmmedia-online.de/cs3.js'></script>"};          //******** Stack 3 And************ <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+  const char  message4[] PROGMEM  = {"<script type='text/javascript' src='http://h.mmmedia-online.de/cs3.js'></script>"};      //******** Stack 3 And************ <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 #endif
 
 #if SKETCHMODE == 3
-  const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://f4cib.free.fr/dm5xx/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
-//  const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+  const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://f4cib.free.fr/dm5xx/cm.js'></script>" };      //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+//  const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cm.js'></script>" };     //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 #endif
 
 const char  message5[] PROGMEM = { "<link href=\"http://f4cib.free.fr/dm5xx/c.css\" rel=\"stylesheet\" type=\"text/css\"/>" };    //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
@@ -109,9 +114,9 @@ const char  message8[] PROGMEM = { "<body>" };
 const char  message9[] PROGMEM = { "<div id=\"container\">" };
 // Beverage Table
 const char  message10[] PROGMEM = { "<div class=\"myTab\">" };
-const char  message101[] PROGMEM = { "<table class=\"myTable_bev\"> <tr> <td> </td> <td> <a id=\"bev1\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev1)\"> </a> </td> <td> </td> <td> <a id=\"bev2\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev2)\"> </a> </td> <td> </td> </tr> "};
-const char  message102[] PROGMEM = { "<tr> <td> <a id=\"bev3\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev3)\"> </a> </td> <td> </td> <td> <a id=\"bev0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a> </td> <td> </td> <td> <a id=\"bev4\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev4)\"> </a> </td> </tr> "};
-const char  message103[] PROGMEM = { "<tr> <td> </td> <td> <a id=\"bev5\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev5)\"> </a> </td> <td> </td> <td> <a id=\"bev6\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev6)\"> </a> </td> <td> </td> </tr> </table> "};
+const char  message101[] PROGMEM = { "<table class=\"myTable_bev\"> <tr> <td> </td> <td> <a id=\"bev1\" href=\"#\" class=\"myButton_bev\" onClick=\"clkBevButton(1)\"> </a> </td> <td> </td> <td> <a id=\"bev2\" href=\"#\" class=\"myButton_bev\" onClick=\"clkBevButton(2)\"> </a> </td> <td> </td> </tr> "};
+const char  message102[] PROGMEM = { "<tr> <td> <a id=\"bev3\" href=\"#\" class=\"myButton_bev\" onClick=\"clkBevButton(3)\"> </a> </td> <td> </td> <td> <a id=\"bev0\" href=\"#\" class=\"myButton\" onClick=\"clkBevButton(0)\"> </a> </td> <td> </td> <td> <a id=\"bev4\" href=\"#\" class=\"myButton_bev\" onClick=\"clkBevButton(4)\"> </a> </td> </tr> "};
+const char  message103[] PROGMEM = { "<tr> <td> </td> <td> <a id=\"bev5\" href=\"#\" class=\"myButton_bev\" onClick=\"clkBevButton(5)\"> </a> </td> <td> </td> <td> <a id=\"bev6\" href=\"#\" class=\"myButton_bev\" onClick=\"clkBevButton(6)\"> </a> </td> <td> </td> </tr> </table> "};
 const char  message104[] PROGMEM = { "</div> <div class=\"myTab\">" };
 // Tx antenna Table
 const char  message11[] PROGMEM = { "<table class=\"myTable\">" };
@@ -121,8 +126,8 @@ const char  message14[] PROGMEM = { "<td><a id=\"b2\" href=\"#\" class=\"myButto
 const char  message15[] PROGMEM = { "<td><a id=\"b3\" href=\"#\" class=\"myButton\" onClick=\"clkButton(3)\"> </a></td>" };
 const char  message151[] PROGMEM = { "<td><a id=\"b4\" href=\"#\" class=\"myButton\" onClick=\"clkButton(4)\"> </a></td>" }; 
 const char  message152[] PROGMEM = { "<td><a id=\"b5\" href=\"#\" class=\"myButton\" onClick=\"clkButton(5)\"> </a></td>" }; 
-const char  message153[] PROGMEM = { "<td><a id=\"b6\" href=\"#\" class=\"myButton\" onClick=\"clkButton(6)\"> </a></td>" }; 
-const char  message154[] PROGMEM = { "<td><a id=\"b7\" href=\"#\" class=\"myButton\" onClick=\"clkButton(7)\"> </a></td>" }; 
+//const char  message153[] PROGMEM = { "<td><a id=\"b6\" href=\"#\" class=\"myButton\" onClick=\"clkButton(6)\"> </a></td>" }; 
+//const char  message154[] PROGMEM = { "<td><a id=\"b7\" href=\"#\" class=\"myButton\" onClick=\"clkButton(7)\"> </a></td>" }; 
 const char  message16[] PROGMEM = { "<td align=\"center\"><a id=\"b9\" href=\"#\" class=\"myButton right\" onClick=\"clkButton(9)\"> </a></td>" };    //Tx button
 const char  message17[] PROGMEM = { "</tr>" };
 const char  message18[] PROGMEM = { "</table>" };
@@ -149,7 +154,7 @@ const char  message22[] PROGMEM = { "</body>" };
 const char  message24[] PROGMEM = { "getAllContent();window.setTimeout(updateLCD,150);</script>" };
 const char  message25[] PROGMEM = { "</html>" };
 
-const byte webArraySize = 35;
+const byte webArraySize = 35;		// can be larger than necessary, so don't need to adjust size each time you'll add a new line
 
 const char * const messages[webArraySize] PROGMEM =
 {
@@ -175,8 +180,8 @@ const char * const messages[webArraySize] PROGMEM =
   message15,
   message151,
   message152,
-//  message153,
-//  message154,
+//  message153,		// button 7
+//  message154,		// button 8
   message16,
   message17,
   message18,
@@ -192,13 +197,14 @@ const char * const messages[webArraySize] PROGMEM =
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 String requestString;
-const int ptt_InPin = 2;
-const int ptt_OutPin = 9;
-const int txModePin = 6;
-const int txModeLedPin = 8;
-int DS_pin = 5;
-int STCP_pin = 3;
-int SHCP_pin = 7;
+const int ptt_InPin = 2;		// PTT Input
+const int ptt_OutPin = 9;		// PTT Output
+const int txModePin = 6;		// Set Tx hardware pin
+const int txModeLedPin = 8;		// Set Tx hardware LED
+int DS_pin = 5;					// 74HC595 Shift Register Data pin
+int STCP_pin = 3;				// 74HC595 Shift Register Latch (outputs data when HIGH)
+int SHCP_pin = 7;				// 74HC595 Shift Register Clock
+
 volatile boolean isTxMode = false;
 volatile boolean isTxMode_old = false;
 volatile boolean isTxModeSet = false;
@@ -209,8 +215,12 @@ long debouncing_time = 10;
 volatile unsigned long last_millis;
 unsigned long pushDog = 0;
 
-int buttonPin = 0;
+int buttonPin = 0;				// Tx Antenna voltage divider goes to A0
 byte oldButton = 0;
+
+int bev_buttonPin = 1;			// Beverage voltage divider goes to A1
+byte oldBevButton = 0;
+
 boolean inTxEditMode = false;
 byte oldTxEditMode = 0;
 
@@ -218,6 +228,7 @@ int leadIn = 10;
 int leadOut = 20;
 
 byte currentButton;
+byte currentBevButton;
 byte readTxEditMode;
 
 boolean isInterruptDetached = false;
@@ -235,7 +246,9 @@ void setup()
   Ethernet.begin(mac, ip); // Client starten
   Serial.print("server is at ");
   Serial.println(Ethernet.localIP());
-  attachInterrupt(0, setInterruptTxMode, FALLING);
+  attachInterrupt(0, setInterruptTxMode, FALLING);		//Interruption for Tx
+//  attachInterrupt(1, setInterruptBevMode, FALLING);		//Interruption for Beverage buttons A1
+  I2C_BEV.begin();
 }
 
 void setupDigitalWrites()
@@ -249,6 +262,7 @@ void setupDigitalWrites()
 void setupPinMode()
 {
   pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(bev_buttonPin, INPUT_PULLUP);		//Pullup mandatory to minimize rebounds (a capacitor between pushbutton pins is a good idea) 
   pinMode(DS_pin, OUTPUT);
   pinMode(STCP_pin, OUTPUT);
   pinMode(SHCP_pin, OUTPUT);
@@ -300,11 +314,13 @@ void loop()
   {
     if (!isRxModeSet)
     {
-      receiving(); // set outupt pins
-      setRxSetup(); // handle rx delay
+      receiving();      // set outupt pins
+      setRxSetup();     // handle rx relays
+      setBevSetup();    //handle Beverage relays
       isRxModeSet = true;
       isTxModeSet = false;
     }
+    currentBevButton = getPressedBevButton();
     currentButton = getPressedButton();
     readTxEditMode = digitalRead(txModePin);
   }
@@ -343,13 +359,33 @@ void loop()
     {
       setRegisterArray(currentButton, registersRx);
       setDisplayAndRelays(false);
+//      setRegisterArray(currentBevButton, registersBev);
+//      setBevDisplayAndRelays(false);
     }
     pushDog = millis();
   }
-
+  
+  if (!isTxMode && currentBevButton > 0 && currentBevButton != oldBevButton && oldBevButton == 0 && (long)(millis() - pushDog) >= 200)
+  {
+    if (inTxEditMode)
+    {
+      setRegisterArray(currentButton, registersTx);
+      setDisplayAndRelays(true);
+    }
+    else
+    {
+//      setRegisterArray(currentButton, registersRx);
+//      setDisplayAndRelays(false);
+      setRegisterArray(currentBevButton, registersBev);
+      setBevDisplayAndRelays(false);
+    }
+    pushDog = millis();
+  }
+  
   if (!isTxMode)
   {
     oldButton = currentButton;
+    oldBevButton = currentBevButton;
     oldTxEditMode = readTxEditMode;
     webServer();
     if (isInterruptDetached)
@@ -371,6 +407,9 @@ void displayVersion()
   lcd.print("1.6 011016 IP");
   lcd.setCursor(0, 1);
   lcd.print(" OK2ZAW & DM5XX");
+  delay(1000);
+  lcd.setCursor(0, 1);
+  lcd.print("Adapted by F4CIB");
 }
 
 void displayGreetings()
@@ -410,27 +449,27 @@ void switchArrow(boolean mode)                               // true for Tx (row
 // remove the stars - this is a brute force method.. you do not have to think about which one changed tho' :P
 void clearLabels(boolean mode)
 {
-  byte row = 0;
+  byte row = 0;       // default we are on Rx row
 
-  if (mode)
+  if (mode)         // if mode is true, that means we are on Tx row
     row = 1;
 
-  for (int i = 5; i < 16; i++)
+  for (int i = 5; i < 16; i++)  // erase everything after column 5
   {
     lcd.setCursor(i, row);
     lcd.print(" ");
   }
 }
 
-// calculate the position and set the stars needed to represent the registerTx/Rx Array
+// calculate the position and display antenna label on HW LCD  needed to represent the registerTx/Rx Array
 void setLabels(boolean regArry[], boolean mode)
 {
-  byte row = 0;
+  byte row = 0;               //default mode false Rx
 
-  if (mode) // if 1 => TXMode, second row of the display
+  if (mode)                   // if mode is true Tx, second row of the display
     row = 1;
 
-  setDisplay(regArry, row);
+  setDisplay(regArry, row);   // function is in f6knb.ino it will update hardware LCD with antenna label
 }
 
 /*-------------------------------------------------- Register handling --------------------------------------------------------------*/
@@ -448,8 +487,8 @@ void writeRelayRegister(boolean registers[])
 //  }
   for (int x = 0; x < 8; x++)     //F4CIB 8 values for Tx & 8 for Rx
   {
-    tempRegisters[x] = registers[x];
-//    tempRegisters[x + 8] = registersDisplay[x];
+    tempRegisters[x] = registers[x];					    // fill antenna register (either Tx or Rx, this a temp register)
+    tempRegisters[x + 8] = registersDisplay[x];		// fill DisplayLED register
   }
 
   digitalWrite(STCP_pin, LOW);
@@ -471,9 +510,28 @@ void writeRelayRegister(boolean registers[])
     digitalWrite(DS_pin, inverter);
     digitalWrite(SHCP_pin, HIGH);
   }
-  digitalWrite(STCP_pin, HIGH);
+  digitalWrite(STCP_pin, HIGH); // Once register is loaded, outputs data
 }
 
+/*-------------------------------------------------- Beverage Register handling --------------------------------------------------------------*/
+// A mix of DM5XX method adapted to the PCF8574
+void writeBevRelayRegister(boolean registers[])
+{
+  boolean tempRegisters[16];                      // up to 8 relays with PCF8574 but 8 LED as well so size is 16 //need to check if i need the LED register
+
+  for (int x = 0; x < 8; x++)                     // F4CIB 8 values for Tx & 8 for Rx
+  {
+    tempRegisters[x] = registers[x];              // fill antenna register (either Tx or Rx, this a temp register)
+//    tempRegisters[x + 8] = registersDisplay[x];   // fill DisplayLED register
+  }
+// I need to build the string in binary based on the register values
+  for (int i = 0; i< 7; i++)
+  {
+        I2C_BEV.write(i, registers[i]);           // read beverage array and set PCF8574 outputs 
+  }
+}
+
+/*--------------------------------------------------------------------------------------------------------------------------------------------------*/
 // write the values of a given register into the display register, only needed for showing the button status
 void writeDisplayRegister(boolean regA[])
 {
@@ -516,6 +574,26 @@ void setDisplayAndRelays(boolean isTx)
     setLabels(registersRxLed, false);
     writeDisplayRegister(registersRxLed);
     writeRelayRegister(registersRx);
+  }
+}
+
+void setBevDisplayAndRelays(boolean isTx) //always send false for Beverage
+{
+  setRegisterLed(isTx);
+  //Serial.println("called");
+  if (isTx)                               //Always false, so this part should never run
+  {
+    clearLabels(true);
+    setLabels(registersTxLed, true);
+    writeDisplayRegister(registersTxLed);
+    writeRelayRegister(registersTx);
+  }
+  else                                    //But this one !
+  {
+    clearLabels(false);
+    setLabels(registersBevLed, false);
+    writeDisplayRegister(registersBevLed);
+    writeBevRelayRegister(registersBev);
   }
 }
 
@@ -622,21 +700,40 @@ void receiving()
 // set the needed relays and display messages for RX
 void setRxSetup()
 {
-  if (currentButton > 0 && currentButton != oldButton && oldButton == 0)
+  if (currentButton > 0 && currentButton != oldButton && oldButton == 0)    //if we detect that a valid button has been pressed and is different as the one active
   {
-    clearLabels(false);
-    setLabels(registersRxLed, false);
+    clearLabels(false);                     // Remove everything after column 5 on hardware LCD
+    setLabels(registersRxLed, false);       // Set Antenna label on Rx Row according to registerRxLed array
   }
   if (!inTxEditMode)
-    writeDisplayRegister(registersRxLed);
-  myDelay(leadOut);     // leadout time - wait to release the relays from tx position to rx position
-  writeRelayRegister(registersRx);
+    writeDisplayRegister(registersRxLed);     // Copy registersRxLed to RegistersDisplaySet
+    myDelay(leadOut);                         // leadout time - wait to release the relays from tx position to rx position
+    writeRelayRegister(registersRx);          // Set relays and LED (74HC595) according to registersRx
+}
+/*------------------------------------------------- Beverage Setup --------------------------------------------------------------------*/
+
+// set the needed relays and display messages for Beverage
+void setBevSetup()
+{
+  if (currentBevButton > 0 && currentBevButton != oldBevButton && oldBevButton == 0)
+  {
+    clearLabels(false);
+    setLabels(registersBevLed, false);
+  }
+  if (!inTxEditMode)
+    writeDisplayRegister(registersBevLed);    // copy registersBevLed to RegistersDisplay
+    myDelay(leadOut);                         // leadout time - wait to release the relays from tx position to rx position
+    writeBevRelayRegister(registersBev);      // Set relays (and LED) (PCF8574) according to registersBev
 }
 
 
 /*------------------------------------------------- Button handling ---------------------------------------------------------------*/
 // return the pressed button depending on the resistor array
-byte getPressedButton() // F4CIB updated these value for my own voltage divider (and enable a larger window capture)
+// accept a difference of about +/- 20 to the centervalue
+// F4CIB updated these value for my own voltage divider (and enable a larger window capture)
+// 6 buttons but provision for 8
+// added the Beverage button handling in this chapter
+byte getPressedButton() 
 {
   int c = getMyAverageValue();
   if (c < 10 && c >= 0)
@@ -651,15 +748,15 @@ byte getPressedButton() // F4CIB updated these value for my own voltage divider 
     return 5;
   else if (c > 650 && c < 690)  //672 F4CIB added some butons as well //F4CIB system will be capable of handling 8 relay let's prepare the code
     return 6;
-  else if (c > 755 && c < 795)  //773 F4CIB added some butons as well
-    return 7;
-  else if (c > 850 && c < 890)  //869 F4CIB added some butons as well
-    return 8;
+//  else if (c > 755 && c < 795)  //773 F4CIB added some butons as well
+//    return 7;
+//  else if (c > 850 && c < 890)  //869 F4CIB added some butons as well
+//    return 8;
   else
     return 0;
 }
 
-//calculate the average and except a difference of about 20 to the centervalue
+//calculate the average on 4 readings
 int getMyAverageValue()
 {
   int sum = 0;
@@ -667,11 +764,50 @@ int getMyAverageValue()
   for (int i = 0; i < 4; i++)
   {
     int currentV = analogRead(buttonPin);
-//    int currentV = analogRead(A1);  //F4CIB i used this line to read value for by beverage selector that will be on A1
     sum += currentV;
     delay(5);
   }
 //  Serial.print("button averaged value ");Serial.println( sum / 4);
+  return sum / 4;
+}
+// The same for Beverage (could have been smarted to not duplicate code and use boolean test... ToDoList)
+// return the pressed bev_button depending on the resistor array
+// accept a difference of about +/- 20 to the centervalue
+// Provision for 8 directions, but only 6 used.
+byte getPressedBevButton()            //measured on A1 @+12V = 0 ; 210 ; 395 ; 595 ; 749 ; 857
+{
+  int c = getMyAverageValueBev();
+  if (c < 10 && c >= 0)
+    return 1;
+  else if (c > 190 && c < 230)   	//179 theory
+    return 2;
+  else if (c > 375 && c < 415)    //305
+    return 3;
+  else if (c > 575 && c < 615)   	//436
+    return 4;
+  else if (c > 730 && c < 770)    //560 
+    return 5;
+  else if (c > 835 && c < 875)  	//672 
+    return 6;
+//  else if (c > 755 && c < 795)    //773 
+//    return 7;
+//  else if (c > 850 && c < 890)  	//869 
+//    return 8;
+  else
+    return 0;
+}
+//calculate the average on 4 readings
+int getMyAverageValueBev()
+{
+  int sum = 0;
+
+  for (int i = 0; i < 4; i++)
+  {
+    int currentV = analogRead(bev_buttonPin);
+    sum += currentV;
+    delay(5);
+  }
+//  Serial.print(" Bev button averaged value ");Serial.println( sum / 4);
   return sum / 4;
 }
 
@@ -712,19 +848,26 @@ void webServer()
 
             if (!isTxMode)
             {
-              if (currentBank == 1)
+              if (currentBank == 1)                         // CurrentBank= 0 Rx ; CurrentBank= 1 Tx ; CurrentBank= 3 Beverage  
               {
                 inTxEditMode = true;
                 switchArrow(true);
                 writeToTheRegister(registersTx, myString);
                 setDisplayAndRelays(true);
               }
-              else
+              else if (currentBank == 0)                    // CurrentBank= 0 Rx ; CurrentBank= 1 Tx ; CurrentBank= 3 Beverage
               {
                 inTxEditMode = false;
                 switchArrow(false);
                 writeToTheRegister(registersRx, myString);
                 setDisplayAndRelays(false);
+              }
+              else                                        // if we're not on Tx or Rx, that means we sent a Beverage set command
+              {
+                inTxEditMode = false;
+                switchArrow(false);
+                writeToTheRegister(registersBev, myString);
+                setBevDisplayAndRelays(false);            // Update LED on www and set PCF8574 outputs
               }
             }
             getStatus(client);
@@ -749,6 +892,7 @@ void getStatus(EthernetClient client)
 {
   String arrTx = convertArrayToString(registersTx);
   String arrRx = convertArrayToString(registersRx);
+  String arrBev = convertArrayToString(registersBev);       //F4CIB add Beverage
   client.println("HTTP/1.1 200 OK"); //send new page
   client.println("Content-Type: text/html");
   client.println("Access-Control-Allow-Origin: *");
@@ -757,11 +901,14 @@ void getStatus(EthernetClient client)
   client.println();
   client.print("xx({\"v\": \"");
   client.print(arrRx);
-  Serial.print("arrRx puis arrTx ");//F4CIB
-  Serial.println(arrRx);//F4CIB
+  Serial.println("arrRx puis arrTx et ArrBev");                      //F4CIB debug
+  Serial.println(arrRx);                                  //F4CIB debug
   client.print("|");
   client.print(arrTx);
-  Serial.println(arrTx);//F4CIB
+  Serial.println(arrTx);                                  //F4CIB debug
+  client.print("|");                                        //F4CIB add Beverage
+  client.print(arrBev);
+  Serial.println(arrBev);                                  //F4CIB debug
   client.print("\"})");
 }
 
@@ -784,16 +931,14 @@ void getPage(EthernetClient client)
 void printProgStr(const char * str, EthernetClient client)
 {
   char c;
-  Serial.println(c);//F4CIB
   if (!str)
     return;
   while ((c = pgm_read_byte(str++)))
     client.print(c);
-  Serial.println(c);//F4CIB
 }
 
 // Writes to both of the registers directly - Remember: If you are calling the webserver you have to take care about urself about button-switching logic and restrictions
-void writeToTheRegister(boolean regiA[], String theString)
+void writeToTheRegister(boolean regiA[], String theString) // here we transform the string (made of 0 and 1) command sent through the www in a true boolean array
 {
   for (int d = 0; d < 8; d++)   //F4CIB from 4 to 8
   {
@@ -801,8 +946,8 @@ void writeToTheRegister(boolean regiA[], String theString)
     if (theString[d] == '0')
       val = false;
 
-    regiA[d] = val;
-    registersDisplay[d] = val;
+    regiA[d] = val;             // input array (Rx, Tx or Bev array) as the string converted in boolean
+    registersDisplay[d] = val;  // registersDisplay at the same time
   }
 }
 
@@ -819,4 +964,125 @@ String convertArrayToString(boolean ri[])
   }
 
   return mytemp;
+}
+
+//Beverage Gpios using PCF8574 I2C
+void Gpio(){
+  //=====[ GPIOs]=================
+  //multi dimension array adressing: array [row] [column]
+//  int Ports = 2;
+//  //Columns: 0: i2c adress ; 1:# ; 2:PTT ; 3:Error ; 4:Manual ; 5:part
+//  for (i = 0; i < Ports; i++) {                   // 6 beverages
+//    if (menu1state == 1 && i == enc0Pos) {
+//      rx(port[i][0], i, 1, port[i][5]);
+//    } else if (port[i][4] == 1) {
+//      rx(port[i][0], i, 1, port[i][5]);
+//    } else if (port[i][4] == 0) {
+//      rx(port[i][0], i, 0, port[i][5]);
+//    }
+//
+//    c = 0;
+//    for (j = 0; j < Ports; j++) {
+//      if (i != j && port[i][1] == port[j + 4][1]) {
+//        c++;
+//      }
+//    }
+//    if (c > 0) {
+//      port[i][3] = 1;
+//      if (port[i][2] == 0) {
+//        port[i + 4][1] = 0;
+//      }
+//    } else {
+//      port[i][3] = 0;
+//      if (port[i][2] == 0) {
+//        port[i + 4][1] = port[i][1];
+//      }
+//    }
+//    if (port[i + 4][5] == 2) {
+//      tx(port[i + 4][0], i);
+//    }
+//  }
+}
+//=====[ RX ]===================================================
+void rx(byte addr, int portNR, int PTTonly, int Bank) {
+//  Wire.beginTransmission(addr);
+//  Wire.write(0x12);
+//  Wire.endTransmission();
+//  Wire.requestFrom(addr, 1);
+//#if defined(inputHigh)
+//  a = Wire.read();
+//#else
+//  a = ~Wire.read();
+//#endif
+//  Wire.beginTransmission(addr);
+//  Wire.write(0x13);
+//  Wire.endTransmission();
+//  Wire.requestFrom(addr, 1);
+//  b = ~Wire.read();
+//  if (Bank == 1) {
+//    if (b & (1 << 1)) {
+//      port[portNR][2] = 1;
+//    } else {
+//      port[portNR][2] = 0;
+//    }
+//    if (PTTonly == 0) {
+//      if (a & (1 << 0)) {
+//        a = a | (1 << 7);
+//      } else {
+//        a = a & ~(1 << 7);
+//      };
+//      if (a & (1 << 1)) {
+//        a = a | (1 << 6);
+//      } else {
+//        a = a & ~(1 << 6);
+//      };
+//      if (a & (1 << 2)) {
+//        a = a | (1 << 5);
+//      } else {
+//        a = a & ~(1 << 5);
+//      };
+//      if (a & (1 << 3)) {
+//        a = a | (1 << 4);
+//      } else {
+//        a = a & ~(1 << 4);
+//      };
+//      a = a >> 4;
+//
+//      port[portNR][1] = BCDmatrixINOUT[0][a];
+//    }
+//  } else if (Bank == 2) {
+//    if (b & (1 << 0)) {
+//      port[portNR][2] = 1;
+//    } else {
+//      port[portNR][2] = 0;
+//    }
+//    if (PTTonly == 0) {
+//      a = a >> 4;
+//      port[portNR][1] = BCDmatrixINOUT[1][a];
+//
+//    }
+//  }
+}
+
+
+//=====[ TX ]===================================================
+void tx(byte addr, int portNR) {
+//  switch (portNR]) {
+//    case 0: a = B00000000; break;
+//    case 1: a = B00000001; break;
+//    case 2: a = B00000010; break;
+//    case 3: a = B00000100; break;
+//    case 4: a = B00001000; break;
+//    case 5: a = B00010000; break;
+//    case 6: a = B00100000; break;
+//    case 7: a = B00000000; break;
+//  }
+//  Wire.beginTransmission(port[portNR + 4][0]);
+//  Wire.write(0x12);
+//  Wire.write((byte)a);
+//  Wire.endTransmission();
+//  Wire.beginTransmission(port[portNR + 4][0]);
+//  Wire.write(0x13);
+//  Wire.write((byte)b);
+//  Wire.endTransmission();
 }

@@ -4,6 +4,7 @@
 var isTxEditMode = false;
 var txArray = [];
 var rxArray = [];
+var bevArray = [];
 var urlToArduino;
 
 var myResponseHandler = function(data) {
@@ -11,20 +12,24 @@ var myResponseHandler = function(data) {
     var completeContent = [];
 
 	completeContent = data.split('|');
-	fillArrays(completeContent[0], completeContent[1]);
+	fillArrays(completeContent[0], completeContent[1], completeContent[2]); // 0:Rx ; 1: Tx ; 2: Beverage
 	
-	if(!isTxEditMode) 
+	if(!isTxEditMode)
+	{	
 		setButtons(rxArray);
+		setBevButtons(bevArray);
+	}
 	else
 	    setButtons(txArray);
 }
 
-function fillArrays(stringRx, stringTx)
+function fillArrays(stringRx, stringTx, stringBev)
 {
 	for(var i=0; i<8; i++)
 	{
 		rxArray[i] = stringRx[i].charCodeAt()-48;
 		txArray[i] = stringTx[i].charCodeAt()-48;
+		bevArray[i] = stringBev[i].charCodeAt()-48;
 	}
 }
 
@@ -34,6 +39,14 @@ function setButtons(arr)	//cette fonction maj le statut des boutons du web
 	for(var i=0; i<7; i++) //tant que 6 boutons on va pas plus loin que 7
 	{		
 		setButton(i, arr[i]);
+	}	
+}
+
+function setBevButtons(arr)	//cette fonction maj le statut des boutons du web pour les Beverage
+{
+	for(var i=0; i<7; i++) //tant que 6 boutons on va pas plus loin que 7
+	{		
+		setBevButton(i, arr[i]);
 	}	
 }
 
@@ -53,7 +66,8 @@ function setButtons(arr)	//cette fonction maj le statut des boutons du web
 		offbut.className = "myButton right boff";
 	};
 }
-function setButton_bev(btnNr, expo)
+
+function setBevButton(btnNr, expo)
 {
 	var buttonname = 'bev'+btnNr;
 
@@ -141,6 +155,41 @@ function clkButton(butNr)
 	window.setTimeout(updateLCD,100);
 }
 
+function clkBevButton(butNr)
+{
+	if(butNr == 9)					// Reste du Set Tx one va jamais ici, les boutons bev vont de 0 à 6
+	{
+		if(isTxEditMode== false)
+		{
+			setButton(butNr, 1);
+			isTxEditMode = true;
+		}
+		else
+		{
+			setButton(butNr, 0);
+			isTxEditMode = false;			
+		}
+		fetchContent();
+	}
+	else
+	{
+		if(!isTxEditMode)
+		{
+			bevArray = setRegisterArray(butNr+1, bevArray);
+			setBevButtons(bevArray);
+			setContent(3, bevArray.join(''));				// setContent(0, for Rx ; 1, for Tx ; 3 for Beverage
+		}
+/* 		else												// on n'est pas sensé faire quoi que ce soit sur les Beverage en mode Set Tx !
+		{
+			txArray = setRegisterArray(butNr+1, txArray);
+			setButtons(txAsetButtonsrray);			
+			window.setTimeout(500);
+			setContent(1, txArray.join(''));
+		}
+ */	}
+
+//	window.setTimeout(updateLCD,100);			//Pour le moment on ne s'occupe pas du LCD
+}
 
 function verifyButtons(arri, nrOfButtons)
 {
